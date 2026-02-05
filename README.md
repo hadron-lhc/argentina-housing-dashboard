@@ -29,7 +29,8 @@ This project is currently under active development. Check back soon for updates!
 ## Current Status
 
 - [x] Initial project setup
-- [ ] Data collection and scraping
+- [x] Data collection and scraping (8,271 properties)
+- [x] Data cleaning pipeline
 - [ ] Database design
 - [ ] Dashboard development
 - [ ] ML model integration

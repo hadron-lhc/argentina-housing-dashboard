@@ -40,7 +40,7 @@ df = load_data()
 # ============================================================
 
 st.title("🏠 Argentina Housing Dashboard")
-st.markdown("Análisis del mercado inmobiliario en Buenos Aires")
+st.markdown("Analysis of the real estate market in Buenos Aires")
 
 # Separador
 st.markdown("---")
@@ -49,13 +49,13 @@ st.markdown("---")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric("Total Propiedades", f"{len(df):,}")
+    st.metric("Total Properties", f"{len(df):,}")
 
 with col2:
-    st.metric("Precio Promedio", f"${df['precio'].mean():,.0f}")
+    st.metric("Average Price", f"${df['precio'].mean():,.0f}")
 
 with col3:
-    st.metric("Área Promedio", f"{df['area'].mean():.0f} m²")
+    st.metric("Average Area", f"{df['area'].mean():.0f} m²")
 
 with col4:
     st.metric("Precio/m²", f"${df['precio_por_m2'].mean():,.0f}")
@@ -67,7 +67,7 @@ st.markdown("---")
 # VISUALIZACIONES - 5 Gráficos
 # ============================================================
 
-st.subheader("📈 Análisis Visual del Mercado")
+st.subheader("📈 Visual Market Analysis")
 st.markdown("")  # Espaciado
 
 # Primera fila: 3 gráficos
@@ -75,12 +75,12 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     # Gráfico 1: Distribución de Precios (Histograma)
-    st.markdown("**Distribución de Precios**")
+    st.markdown("**Price Distribution**")
     fig1 = px.histogram(
         df,
         x="precio",
         nbins=40,
-        labels={"precio": "Precio (USD)"},
+        labels={"precio": "Price (USD)"},
         color_discrete_sequence=["#636EFA"],
     )
     fig1.update_layout(showlegend=False, height=300, margin=dict(l=0, r=0, t=0, b=0))
@@ -88,7 +88,7 @@ with col1:
 
 with col2:
     # Gráfico 2: Precio Promedio por Zona (Barras)
-    st.markdown("**Precio Promedio por Zona**")
+    st.markdown("**Average Price by Zone**")
     precio_por_zona = df.groupby("zona")["precio"].mean().reset_index()
     precio_por_zona = precio_por_zona.sort_values("precio", ascending=False)
 
@@ -96,7 +96,7 @@ with col2:
         precio_por_zona,
         x="zona",
         y="precio",
-        labels={"zona": "Zona", "precio": "Precio Promedio (USD)"},
+        labels={"zona": "Zone", "precio": "Average Price (USD)"},
         color="precio",
         color_continuous_scale="Blues",
     )
@@ -105,7 +105,7 @@ with col2:
 
 with col3:
     # Gráfico 3: Distribución por Zona (Pie Chart)
-    st.markdown("**Propiedades por Zona**")
+    st.markdown("**Properties by Zone**")
     propiedades_por_zona = df["zona"].value_counts().reset_index()
     propiedades_por_zona.columns = ["zona", "cantidad"]
 
@@ -123,13 +123,13 @@ col4, col5 = st.columns(2)
 
 with col4:
     # Gráfico 4: Precio vs Área (Scatter)
-    st.markdown("**Relación Precio vs Área**")
+    st.markdown("**Price vs Area Relationship**")
     fig4 = px.scatter(
         df.sample(1000),  # Muestra de 1000 para mejor performance
         x="area",
         y="precio",
         color="zona",
-        labels={"area": "Área (m²)", "precio": "Precio (USD)"},
+        labels={"area": "Area (m²)", "precio": "Price (USD)"},
         opacity=0.6,
     )
     fig4.update_layout(height=350, margin=dict(l=0, r=0, t=0, b=0))
@@ -137,12 +137,12 @@ with col4:
 
 with col5:
     # Gráfico 5: Precio por m² por Zona (Box Plot)
-    st.markdown("**Precio por m² - Distribución por Zona**")
+    st.markdown("**Price per m² - Distribution by Zone**")
     fig5 = px.box(
         df,
         x="zona",
         y="precio_por_m2",
-        labels={"zona": "Zona", "precio_por_m2": "Precio por m² (USD)"},
+        labels={"zona": "Zone", "precio_por_m2": "Price per m² (USD)"},
         color="zona",
     )
     fig5.update_layout(showlegend=False, height=350, margin=dict(l=0, r=0, t=0, b=0))
@@ -154,7 +154,7 @@ st.markdown("---")
 # EXPLORACIÓN DE DATOS - Filtros y Tabla
 # ============================================================
 
-st.subheader("🔍 Exploración de Datos")
+st.subheader("🔍 Data Exploration")
 st.markdown("")  # Espaciado
 
 # Inicializar session_state si no existe
@@ -179,7 +179,7 @@ with col1:
 
     # Selectbox de zona
     zona_seleccionada = st.selectbox(
-        "Zona", zonas_list, index=zona_index, key="selectbox_zona"
+        "Zone", zonas_list, index=zona_index, key="selectbox_zona"
     )
 
     # Actualizar session_state si cambió
@@ -207,7 +207,7 @@ with col2:
 
         # Selectbox habilitado
         ciudad_seleccionada = st.selectbox(
-            "Ciudad", ciudades_list, index=ciudad_index, key="selectbox_ciudad"
+            "City", ciudades_list, index=ciudad_index, key="selectbox_ciudad"
         )
 
         # Actualizar session_state si cambió
@@ -217,8 +217,8 @@ with col2:
     else:
         # Selectbox deshabilitado
         st.selectbox(
-            "Ciudad",
-            ["Primero seleccione una zona"],
+            "City",
+            ["First select a zone"],
             disabled=True,
             key="selectbox_ciudad_disabled",
         )
@@ -226,12 +226,12 @@ with col2:
 
 with col3:
     precio_min = st.number_input(
-        "Precio Mínimo (USD)", min_value=0, max_value=2000000, value=0, step=10000
+        "Minimum Price (USD)", min_value=0, max_value=2000000, value=0, step=10000
     )
 
 with col4:
     precio_max = st.number_input(
-        "Precio Máximo (USD)", min_value=0, max_value=2000000, value=2000000, step=10000
+        "Maximum Price (USD)", min_value=0, max_value=2000000, value=2000000, step=10000
     )
 
 # Aplicar filtros al DataFrame usando session_state
@@ -248,7 +248,7 @@ df_filtrado = df_filtrado[
 ]
 
 # Mostrar resultados
-st.info(f"📊 Mostrando **{len(df_filtrado):,}** de **{len(df):,}** propiedades")
+st.info(f"📊 Showing **{len(df_filtrado):,}** of **{len(df):,}** properties")
 
 # Tabla interactiva
 st.dataframe(

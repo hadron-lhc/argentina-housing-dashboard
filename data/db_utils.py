@@ -24,6 +24,16 @@ def obtener_zona_por_ciudad(ciudad):
     return None
 
 
+def get_all_properties():
+    conn = sqlite3.connect(DB_PATH)
+
+    query = "SELECT * FROM propiedades"
+
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df
+
+
 def get_properties_filtered(zona=None, ciudad=None, precio_min=None, precio_max=None):
     conn = sqlite3.connect(DB_PATH)
 

@@ -5,6 +5,7 @@ from processing import procesar_caracteristicas
 import time
 import pandas as pd
 from datetime import datetime
+import random
 
 headers = {
     "User-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
@@ -24,7 +25,7 @@ def conectar_a_web(url, max_reintentos=3):
     """
     for intento in range(1, max_reintentos + 1):
         try:
-            time.sleep(5)  # Delay antes del request
+            time.sleep(random.randint(7, 10))
             response = requests.get(url, headers=headers, timeout=15)
 
             if response.status_code == 200:

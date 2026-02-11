@@ -2,7 +2,7 @@
 
 BASE_URL = "https://inmuebles.mercadolibre.com.ar/casas/venta"
 
-MAX_PAGINAS = 5
+MAX_PAGINAS = 42
 
 # Mapeo de zonas a sus slugs en la URL
 ZONAS_SLUGS = {

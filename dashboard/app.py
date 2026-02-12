@@ -71,82 +71,142 @@ st.subheader("📈 Visual Market Analysis")
 st.markdown("")  # Espaciado
 
 # Primera fila: 3 gráficos
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
-    # Gráfico 1: Distribución de Precios (Histograma)
-    st.markdown("**Price Distribution**")
-    fig1 = px.histogram(
-        df,
-        x="precio",
-        nbins=40,
-        labels={"precio": "Price (USD)"},
-        color_discrete_sequence=["#636EFA"],
-    )
-    fig1.update_layout(showlegend=False, height=300, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig1, use_container_width=True)
+    with st.container(border=True):
+        # Gráfico 1: Distribución de Precios (Histograma)
+        st.markdown("**Price Distribution**")
+        fig1 = px.histogram(
+            df,
+            x="precio",
+            nbins=40,
+            labels={"precio": "Price (USD)"},
+            color_discrete_sequence=["#2e8dd1"],
+        )
+        fig1.update_layout(
+            showlegend=False,
+            height=300,
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(240,240,240,0.5)",
+        )
+        st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
-    # Gráfico 2: Precio Promedio por Zona (Barras)
-    st.markdown("**Average Price by Zone**")
-    precio_por_zona = df.groupby("zona")["precio"].mean().reset_index()
-    precio_por_zona = precio_por_zona.sort_values("precio", ascending=False)
+    with st.container(border=True):
+        # Gráfico 2: Precio Promedio por Zona (Barras)
+        st.markdown("**Average Price by Zone**")
+        precio_por_zona = df.groupby("zona")["precio"].mean().reset_index()
+        precio_por_zona = precio_por_zona.sort_values("precio", ascending=False)
 
-    fig2 = px.bar(
-        precio_por_zona,
-        x="zona",
-        y="precio",
-        labels={"zona": "Zone", "precio": "Average Price (USD)"},
-        color="precio",
-        color_continuous_scale="Blues",
-    )
-    fig2.update_layout(showlegend=False, height=300, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig2, use_container_width=True)
+        fig2 = px.bar(
+            precio_por_zona,
+            x="zona",
+            y="precio",
+            labels={"zona": "Zone", "precio": "Average Price (USD)"},
+            color="precio",
+            color_continuous_scale="Viridis",
+        )
+        fig2.update_layout(
+            showlegend=False,
+            height=300,
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(240,240,240,0.5)",
+        )
+        st.plotly_chart(fig2, use_container_width=True)
 
 with col3:
-    # Gráfico 3: Distribución por Zona (Pie Chart)
-    st.markdown("**Properties by Zone**")
-    propiedades_por_zona = df["zona"].value_counts().reset_index()
-    propiedades_por_zona.columns = ["zona", "cantidad"]
+    with st.container(border=True):
+        # Gráfico 3: Distribución por Zona (Pie Chart)
+        st.markdown("**Properties by Zone**")
+        propiedades_por_zona = df["zona"].value_counts().reset_index()
+        propiedades_por_zona.columns = ["zona", "cantidad"]
 
-    fig3 = px.pie(
-        propiedades_por_zona,
-        values="cantidad",
-        names="zona",
-        hole=0.4,  # Donut chart
-    )
-    fig3.update_layout(height=300, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig3, use_container_width=True)
+        fig3 = px.pie(
+            propiedades_por_zona,
+            values="cantidad",
+            names="zona",
+            hole=0.4,  # Donut chart
+        )
+        fig3.update_layout(
+            height=300,
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor="rgba(0,0,0,0)",
+        )
+        st.plotly_chart(fig3, use_container_width=True)
 
-# Segunda fila: 2 gráficos (más anchos)
-col4, col5 = st.columns(2)
+# Segunda fila: 3 gráficos
+col4, col5, col6 = st.columns(3, gap="large")
 
 with col4:
-    # Gráfico 4: Precio vs Área (Scatter)
-    st.markdown("**Price vs Area Relationship**")
-    fig4 = px.scatter(
-        df.sample(1000),  # Muestra de 1000 para mejor performance
-        x="area",
-        y="precio",
-        color="zona",
-        labels={"area": "Area (m²)", "precio": "Price (USD)"},
-        opacity=0.6,
-    )
-    fig4.update_layout(height=350, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig4, use_container_width=True)
+    with st.container(border=True):
+        # Gráfico 4: Precio vs Área (Scatter)
+        st.markdown("**Price vs Area Relationship**")
+        fig4 = px.scatter(
+            df.sample(1000),  # Muestra de 1000 para mejor performance
+            x="area",
+            y="precio",
+            color="zona",
+            labels={"area": "Area (m²)", "precio": "Price (USD)"},
+            opacity=0.6,
+        )
+        fig4.update_layout(
+            height=300,
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(240,240,240,0.5)",
+        )
+        st.plotly_chart(fig4, use_container_width=True)
 
 with col5:
-    # Gráfico 5: Precio por m² por Zona (Box Plot)
-    st.markdown("**Price per m² - Distribution by Zone**")
-    fig5 = px.box(
-        df,
-        x="zona",
-        y="precio_por_m2",
-        labels={"zona": "Zone", "precio_por_m2": "Price per m² (USD)"},
-        color="zona",
-    )
-    fig5.update_layout(showlegend=False, height=350, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig5, use_container_width=True)
+    with st.container(border=True):
+        # Gráfico 5: Precio por m² por Zona (Box Plot)
+        st.markdown("**Price per m² - Distribution by Zone**")
+        fig5 = px.box(
+            df,
+            x="zona",
+            y="precio_por_m2",
+            labels={"zona": "Zone", "precio_por_m2": "Price per m² (USD)"},
+            color="zona",
+        )
+        fig5.update_layout(
+            showlegend=False,
+            height=300,
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(240,240,240,0.5)",
+        )
+        st.plotly_chart(fig5, use_container_width=True)
+
+with col6:
+    with st.container(border=True):
+        # Gráfico 6: Top 10 Ciudades más Caras
+        st.markdown("**Top 10 Most Expensive Cities**")
+        precio_por_ciudad = df.groupby("ciudad")["precio"].mean().reset_index()
+        precio_por_ciudad = precio_por_ciudad.sort_values(
+            "precio", ascending=True
+        ).tail(10)
+
+        fig6 = px.bar(
+            precio_por_ciudad,
+            x="precio",
+            y="ciudad",
+            orientation="h",
+            labels={"ciudad": "City", "precio": "Average Price (USD)"},
+            color="precio",
+            color_continuous_scale="Viridis",
+        )
+        fig6.update_layout(
+            showlegend=False,
+            height=300,
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(240,240,240,0.5)",
+            yaxis=dict(tickfont=dict(size=10)),
+        )
+        st.plotly_chart(fig6, use_container_width=True)
 
 st.markdown("---")
 

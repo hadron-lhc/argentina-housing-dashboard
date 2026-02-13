@@ -1,7 +1,5 @@
 import streamlit as st
-import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import sys
 import os
 
@@ -35,9 +33,9 @@ def get_cities_by_zone(zona):
 # Cargar datos
 df = load_data()
 
-# ============================================================
+# ===============================
 # HEADER - Título y Métricas
-# ============================================================
+# ===============================
 
 st.title("🏠 Argentina Housing Dashboard")
 st.markdown("Analysis of the real estate market in Buenos Aires")

@@ -20,11 +20,10 @@ headers = {
 def crear_tabla_si_no_existe(db_path="../propiedades.db"):
     """
     Crea la tabla propiedades si no existe
-    Se ejecuta al inicio del scraping para asegurar que la tabla esté lista
     """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS propiedades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,12 +39,12 @@ def crear_tabla_si_no_existe(db_path="../propiedades.db"):
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    
+
     # Crear índice en URL para búsquedas rápidas (evitar duplicados)
     cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_url ON propiedades(url)
     """)
-    
+
     conn.commit()
     conn.close()
     print("✓ Tabla 'propiedades' verificada/creada")
@@ -71,11 +70,13 @@ def guardar_en_db(propiedades, db_path="../propiedades.db"):
         if not prop.get("precio") or not prop.get("url"):
             omitidos += 1
             continue
-        
+
         # Verificar que el precio sea un número válido
         try:
             # Limpiar precio (quitar puntos de separador de miles argentinos)
-            precio_limpio = str(prop["precio"]).replace(".", "").replace(",", "").strip()
+            precio_limpio = (
+                str(prop["precio"]).replace(".", "").replace(",", "").strip()
+            )
             precio_val = int(precio_limpio)
             if precio_val <= 0:
                 omitidos += 1
@@ -83,7 +84,7 @@ def guardar_en_db(propiedades, db_path="../propiedades.db"):
         except (ValueError, TypeError):
             omitidos += 1
             continue
-        
+
         # Convertir valores opcionales (pueden ser None)
         try:
             amb_val = int(prop["ambientes"]) if prop.get("ambientes") else None
@@ -93,7 +94,7 @@ def guardar_en_db(propiedades, db_path="../propiedades.db"):
             amb_val = None
             banos_val = None
             area_val = None
-        
+
         # Verificar si ya existe (por URL)
         cursor.execute("SELECT id FROM propiedades WHERE url = ?", (prop.get("url"),))
         existe = cursor.fetchone()
@@ -145,9 +146,9 @@ def guardar_checkpoint(zona, ciudad, pagina, db_path="../propiedades.db"):
         "zona": zona,
         "ciudad": ciudad,
         "pagina": pagina,
-        "ultima_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "ultima_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
-    with open(checkpoint_file, 'w') as f:
+    with open(checkpoint_file, "w") as f:
         json.dump(checkpoint, f)
 
 
@@ -158,9 +159,11 @@ def cargar_checkpoint(db_path="../propiedades.db"):
     """
     checkpoint_file = db_path.replace(".db", "_checkpoint.json")
     if os.path.exists(checkpoint_file):
-        with open(checkpoint_file, 'r') as f:
+        with open(checkpoint_file, "r") as f:
             checkpoint = json.load(f)
-        print(f"📍 Checkpoint encontrado: {checkpoint['zona']} - {checkpoint['ciudad']} - Página {checkpoint['pagina']}")
+        print(
+            f"📍 Checkpoint encontrado: {checkpoint['zona']} - {checkpoint['ciudad']} - Página {checkpoint['pagina']}"
+        )
         print(f"   Última actualización: {checkpoint['ultima_actualizacion']}")
         return checkpoint["zona"], checkpoint["ciudad"], checkpoint["pagina"]
     return None, None, 1
@@ -182,10 +185,10 @@ def reset_scraping(db_path="../propiedades.db"):
     print("\n" + "=" * 60)
     print("🔄 REINICIANDO SCRAPING")
     print("=" * 60 + "\n")
-    
+
     # Borrar checkpoint
     borrar_checkpoint(db_path)
-    
+
     print("✓ Checkpoint eliminado")
     print("El scraping comenzará desde el principio.\n")
 
@@ -286,7 +289,7 @@ def extraer_data(html, zona, ciudad):
         caracteristicas = procesar_caracteristicas(caracteristicas_raw)
         url_publicacion = extraer_url(element)
         fecha_scraping = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
+
         # Agregar propiedad incluso con datos parciales (igual que scraper_ml.py)
         df_data.append(
             {
@@ -300,7 +303,7 @@ def extraer_data(html, zona, ciudad):
                 "url": url_publicacion,
             }
         )
-        
+
     return df_data
 
 
@@ -316,7 +319,7 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == "--reset":
         reset_scraping()
         return
-    
+
     todas_las_propiedades = []  # Acumular TODAS las propiedades
     total_insertados_db = 0
     total_omitidos = 0
@@ -344,7 +347,9 @@ def main():
     for zona, ciudades in CIUDADES_POR_ZONA.items():
         # Si estamos reanudando y esta zona ya pasó, saltear
         if reanudando and zona != checkpoint_zona:
-            if list(CIUDADES_POR_ZONA.keys()).index(zona) < list(CIUDADES_POR_ZONA.keys()).index(checkpoint_zona):
+            if list(CIUDADES_POR_ZONA.keys()).index(zona) < list(
+                CIUDADES_POR_ZONA.keys()
+            ).index(checkpoint_zona):
                 print(f"⏭️  ZONA: {zona} (ya completada)")
                 continue
 
@@ -364,7 +369,11 @@ def main():
             # Loop por cada página
             for pagina in range(1, MAX_PAGINAS + 1):
                 # Si estamos reanudando, saltear páginas ya completadas
-                if reanudando and zona == checkpoint_zona and ciudad == checkpoint_ciudad:
+                if (
+                    reanudando
+                    and zona == checkpoint_zona
+                    and ciudad == checkpoint_ciudad
+                ):
                     if pagina <= checkpoint_pagina:
                         print(f"    ⏭️  Página {pagina}/{MAX_PAGINAS} (ya completada)")
                         continue
@@ -401,7 +410,7 @@ def main():
                     insertados, omitidos = guardar_en_db(propiedades)
                     total_insertados_db += insertados
                     total_omitidos += omitidos
-                    
+
                     mensaje = f"✓ {len(propiedades)} propiedades"
                     if insertados > 0:
                         mensaje += f" ({insertados} nuevas en DB)"

@@ -47,7 +47,7 @@ def crear_tabla_si_no_existe(db_path="../propiedades.db"):
 
     conn.commit()
     conn.close()
-    print("✓ Tabla 'propiedades' verificada/creada")
+    print("Tabla 'propiedades' verificada/creada")
 
 
 def guardar_en_db(propiedades, db_path="../propiedades.db"):

@@ -33,8 +33,7 @@ This project scrapes, analyzes, and visualizes housing data from Mercado Libre t
 - **Data Collection**: Python, BeautifulSoup, Selenium
 - **Database**: SQLite
 - **Dashboard**: Streamlit
-- **Automation**: GitHub Actions
-- **Deployment**: Render
+- **Deployment**: Streamlit
 
 ## Local Setup
 
